@@ -240,29 +240,29 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			}
 
 			client = clients.getClient(receivedPdu.getUserName());
-//			if (client != null) {
-//				ChatPDU responsePdu = ChatPDU.createChatMessageResponsePdu(
-//						receivedPdu.getUserName(), 0, 0, 0, 0,
-//						client.getNumberOfReceivedChatMessages(), receivedPdu.getClientThreadName(),
-//						(System.nanoTime() - client.getStartTime()));
-//
-//				if (responsePdu.getServerTime() / 1000000 > 100) {
-//					log.debug(Thread.currentThread().getName()
-//							+ ", Benoetigte Serverzeit vor dem Senden der Response-Nachricht > 100 ms: "
-//							+ responsePdu.getServerTime() + " ns = "
-//							+ responsePdu.getServerTime() / 1000000 + " ms");
-//				}
-//
-//				try {
-//					client.getConnection().send(responsePdu);
-//					log.debug(
-//							"Chat-Message-Response-PDU an " + receivedPdu.getUserName() + " gesendet");
-//				} catch (Exception e) {
-//					log.debug("Senden einer Chat-Message-Response-PDU an " + client.getUserName()
-//							+ " nicht moeglich");
-//					ExceptionHandler.logExceptionAndTerminate(e);
-//				}
-//			}
+			if (client != null) {
+				ChatPDU responsePdu = ChatPDU.createChatMessageResponsePdu(
+						receivedPdu.getUserName(), 0, 0, 0, 0,
+						client.getNumberOfReceivedChatMessages(), receivedPdu.getClientThreadName(),
+						(System.nanoTime() - client.getStartTime()));
+
+				if (responsePdu.getServerTime() / 1000000 > 100) {
+					log.debug(Thread.currentThread().getName()
+							+ ", Benoetigte Serverzeit vor dem Senden der Response-Nachricht > 100 ms: "
+							+ responsePdu.getServerTime() + " ns = "
+							+ responsePdu.getServerTime() / 1000000 + " ms");
+				}
+
+				try {
+					client.getConnection().send(responsePdu);
+					log.debug(
+							"Chat-Message-Response-PDU an " + receivedPdu.getUserName() + " gesendet");
+				} catch (Exception e) {
+					log.debug("Senden einer Chat-Message-Response-PDU an " + client.getUserName()
+							+ " nicht moeglich");
+					ExceptionHandler.logExceptionAndTerminate(e);
+				}
+			}
 			log.debug("Aktuelle Laenge der Clientliste: " + clients.size());
 		}
 	}
@@ -442,7 +442,11 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 				// Logout-Request vom Client empfangen
 				logoutRequestAction(receivedPdu);
 				break;
-			case 	
+			
+			case CONFIRM_EVENT:
+				// Client bestätigt Empfang einer Nachricht
+				confirmEventAction(receivedPdu);
+				break;
 				
 			default:
 				log.debug("Falsche PDU empfangen von Client: " + receivedPdu.getUserName()
@@ -453,5 +457,10 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			log.error("Exception bei der Nachrichtenverarbeitung");
 			ExceptionHandler.logExceptionAndTerminate(e);
 		}
+	}
+
+	private void confirmEventAction(ChatPDU receivedPdu) {
+		// TODO Auto-generated method stub
+		
 	}
 }

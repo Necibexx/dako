@@ -154,10 +154,12 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 		userInterface.setMessageLine(receivedPdu.getEventUserName(),
 				(String) receivedPdu.getMessage());
 	}
-
-	protected void confirmResponseEventAction(ChatPDU receivedPdu) {
+	
+	private void confirmEventAction() {
+		// TODO Auto-generated method stub
 		
 	}
+
 	/**
 	 * Bearbeitung aller vom Server ankommenden Nachrichten
 	 */
@@ -252,6 +254,11 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 						logoutEventAction(receivedPdu);
 
 						break;
+				 
+					case CONFIRM_RESPONSE:
+						// Client bekommt Antwort auf eine Bestätigung die er (selbst) gesendet hat
+						confirmEventAction();
+                        break;			    
 
 					default:
 						log.debug("Ankommende PDU im Zustand " + sharedClientData.status
@@ -315,5 +322,6 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 		log.debug("Ordnungsgemaesses Ende des SimpleMessageListener-Threads fuer User"
 				+ sharedClientData.userName + ", Status: " + sharedClientData.status);
 	} // run
+
 
 }

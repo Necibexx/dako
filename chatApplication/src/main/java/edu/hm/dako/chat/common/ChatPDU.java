@@ -460,4 +460,6 @@ public class ChatPDU implements Serializable {
 		pdu.setErrorCode(errorCode);
 		return pdu;
 	}
+
+	
 }

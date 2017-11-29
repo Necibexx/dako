@@ -444,7 +444,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 				break;
 			
 			case CONFIRM_EVENT:
-				// Client bestätigt Empfang einer Nachricht
+				// Client bestï¿½tigt Empfang einer Nachricht
 				confirmEventAction(receivedPdu);
 				break;
 				
@@ -461,6 +461,10 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 	private void confirmEventAction(ChatPDU receivedPdu) {
 		// TODO Auto-generated method stub
+	    ChatPDU responsePdu = new ChatPDU()
+	    for(/**ALLE CLIENTS BIS AUF DEN SENDER*/) {
+	        client.getConnection().send(pdu);
+	    }
 		
 	}
 }

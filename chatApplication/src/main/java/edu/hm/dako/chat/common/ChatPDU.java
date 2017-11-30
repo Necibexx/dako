@@ -326,7 +326,7 @@ public class ChatPDU implements Serializable {
 		pdu.setServerThreadName(Thread.currentThread().getName());
 		pdu.setClientThreadName(receivedPdu.getClientThreadName());
 		pdu.setUserName(eventInitiator);
-		pdu.setClientStatus(ClientConversationStatus.REGISTERED);
+		pdu.setClientStatus(ClientConversationStatus.REGISTERING);
 		return pdu;
 	}
 
@@ -381,7 +381,7 @@ public class ChatPDU implements Serializable {
 		pdu.setPduType(PduType.LOGOUT_RESPONSE);
 		pdu.setServerThreadName(Thread.currentThread().getName());
 		pdu.setClientThreadName(clientThreadName);
-		pdu.setClientStatus(ClientConversationStatus.UNREGISTERED);
+		pdu.setClientStatus(ClientConversationStatus.UNREGISTERING);
 
 		// Statistikdaten versorgen
 		pdu.setNumberOfSentEvents(numberOfSentEvents);
@@ -483,7 +483,7 @@ public class ChatPDU implements Serializable {
 	        pdu.setServerThreadName(Thread.currentThread().getName());
 	        pdu.setClientThreadName(receivedPdu.getClientThreadName());
 	        pdu.setClients(clientList);
-	        pdu.setClientStatus(ClientConversationStatus.UNREGISTERING);
+	        pdu.setClientStatus(ClientConversationStatus.REGISTERED);
 	        return pdu;
 	    }
        /**
@@ -508,7 +508,7 @@ public class ChatPDU implements Serializable {
            pdu.setServerThreadName(Thread.currentThread().getName());
            pdu.setClientThreadName(receivedPdu.getClientThreadName());
            pdu.setClients(clientList);
-           pdu.setClientStatus(ClientConversationStatus.UNREGISTERING);
+           pdu.setClientStatus(ClientConversationStatus.REGISTERING);
            return pdu;
        }
        /**
@@ -548,24 +548,24 @@ public class ChatPDU implements Serializable {
  * @param clientThreadName
  * @return
  */
-	   public static ChatPDU createConfirmResponsePdu(String eventInitiator,
-	            long numberOfSentEvents, long numberOfLostEventConfirms,
-	            long numberOfReceivedEventConfirms, long numberOfRetries,
-	            long numberOfReceivedChatMessages, String clientThreadName) {
-
-	        ChatPDU pdu = new ChatPDU();
-	        pdu.setPduType(PduType.CONFIRM_RESPONSE);
-	        pdu.setServerThreadName(Thread.currentThread().getName());
-	        pdu.setClientThreadName(clientThreadName);
-	        pdu.setClientStatus(ClientConversationStatus.UNREGISTERED);
-
-	        // Statistikdaten versorgen
-	        pdu.setNumberOfSentEvents(numberOfSentEvents);
-	        pdu.setNumberOfLostEventConfirms(numberOfLostEventConfirms);
-	        pdu.setNumberOfReceivedEventConfirms(numberOfReceivedEventConfirms);
-	        pdu.setNumberOfRetries(numberOfRetries);
-	        pdu.setNumberOfReceivedChatMessages(numberOfReceivedChatMessages);
-	        pdu.setUserName(eventInitiator);
-	        return pdu;
-	    }
+//	   public static ChatPDU createConfirmResponsePdu(String eventInitiator,
+//	            long numberOfSentEvents, long numberOfLostEventConfirms,
+//	            long numberOfReceivedEventConfirms, long numberOfRetries,
+//	            long numberOfReceivedChatMessages, String clientThreadName) {
+//
+//	        ChatPDU pdu = new ChatPDU();
+//	        pdu.setPduType(PduType.CONFIRM_RESPONSE);
+//	        pdu.setServerThreadName(Thread.currentThread().getName());
+//	        pdu.setClientThreadName(clientThreadName);
+//	        pdu.setClientStatus(ClientConversationStatus.REGISTERED);
+//
+//	        // Statistikdaten versorgen
+//	        pdu.setNumberOfSentEvents(numberOfSentEvents);
+//	        pdu.setNumberOfLostEventConfirms(numberOfLostEventConfirms);
+//	        pdu.setNumberOfReceivedEventConfirms(numberOfReceivedEventConfirms);
+//	        pdu.setNumberOfRetries(numberOfRetries);
+//	        pdu.setNumberOfReceivedChatMessages(numberOfReceivedChatMessages);
+//	        pdu.setUserName(eventInitiator);
+//	        return pdu;
+//	    }
 }

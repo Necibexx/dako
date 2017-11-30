@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import edu.hm.dako.chat.common.ChatPDU;
+import edu.hm.dako.chat.common.PduType;
 import edu.hm.dako.chat.common.ClientConversationStatus;
 import edu.hm.dako.chat.common.ClientListEntry;
 import edu.hm.dako.chat.common.ExceptionHandler;
@@ -448,6 +449,16 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 				confirmEventAction(receivedPdu);
 				break;
 				
+			case CONFIRM_LOGIN_EVENT:
+			    // Client bestätigt Login
+                confirmEventAction(receivedPdu);
+                break;
+                
+			case CONFIRM_LOGOUT_EVENT:
+			    // Client bestätigt Logout
+                confirmEventAction(receivedPdu);
+                break;
+                
 			default:
 				log.debug("Falsche PDU empfangen von Client: " + receivedPdu.getUserName()
 						+ ", PduType: " + receivedPdu.getPduType());
@@ -458,13 +469,21 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			ExceptionHandler.logExceptionAndTerminate(e);
 		}
 	}
-
+// Wird ausgeführ sobald ein Confirm Event vom Server empfangen wurde.
 	private void confirmEventAction(ChatPDU receivedPdu) {
 		// TODO Auto-generated method stub
-	    ChatPDU responsePdu = new ChatPDU()
-	    for(/**ALLE CLIENTS BIS AUF DEN SENDER*/) {
-	        client.getConnection().send(pdu);
-	    }
+	    ChatPDU responsePdu = new ChatPDU();
+	    responsePdu = responsePdu.createConfirmResponsePdu(eventInitiator, numberOfSentEvents,
+	                                                       numberOfLostEventConfirms,
+	                                                       numberOfReceivedEventConfirms,
+	                                                       numberOfRetries,
+	                                                       numberOfReceivedChatMessages,
+	                                                       clientThreadName);
+	    
+//	    for(/**ALLE CLIENTS BIS AUF DEN SENDER*/) {
+//	        client.getConnection().send(pdu);
+//	    }
+	    
 		
 	}
 }

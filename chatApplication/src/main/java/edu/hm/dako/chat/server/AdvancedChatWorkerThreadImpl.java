@@ -6,7 +6,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import edu.hm.dako.chat.common.ChatPDU;
-import edu.hm.dako.chat.common.PduType;
 import edu.hm.dako.chat.common.ClientConversationStatus;
 import edu.hm.dako.chat.common.ClientListEntry;
 import edu.hm.dako.chat.common.ExceptionHandler;
@@ -28,9 +27,19 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	public AdvancedChatWorkerThreadImpl(Connection con, SharedChatClientList clients,
 			SharedServerCounter counter, ChatServerGuiInterface serverGuiInterface) {
 
-		super(con, clients, counter, serverGuiInterface);
+		super(con, clients, counter, serverGuiInterface);	    
 	}
-
+    Vector<String> waitList;
+    
+    
+    public void deleteConfWaitListEntry(String user) {
+        waitList.removeElement(user);
+    }
+    public void addConfWaitListEntry(String user) {
+        waitList.addElement(user);
+    }
+    
+    
 	@Override
 	public void run() {
 		log.debug(
@@ -86,6 +95,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			}
 		}
 	}
+
 
 	@Override
 	protected void loginRequestAction(ChatPDU receivedPdu) {
@@ -225,6 +235,9 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 							&& (client.getStatus() != ClientConversationStatus.UNREGISTERED)) {
 						pdu.setUserName(client.getUserName());
 						client.getConnection().send(pdu);
+						
+						addConfWaitListEntry(client.getUserName());
+						
 						log.debug("Chat-Event-PDU an " + client.getUserName() + " gesendet");
 						clients.incrNumberOfSentChatEvents(client.getUserName());
 						eventCounter.getAndIncrement();
@@ -469,21 +482,26 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			ExceptionHandler.logExceptionAndTerminate(e);
 		}
 	}
-// Wird ausgeführ sobald ein Confirm Event vom Server empfangen wurde.
+// Wird ausgeführt sobald ein Confirm Event auf der Serverseite empfangen wurde.
 	private void confirmEventAction(ChatPDU receivedPdu) {
 		// TODO Auto-generated method stub
-	    ChatPDU responsePdu = new ChatPDU();
-	    responsePdu = responsePdu.createConfirmResponsePdu(eventInitiator, numberOfSentEvents,
-	                                                       numberOfLostEventConfirms,
-	                                                       numberOfReceivedEventConfirms,
-	                                                       numberOfRetries,
-	                                                       numberOfReceivedChatMessages,
-	                                                       clientThreadName);
-	    
-//	    for(/**ALLE CLIENTS BIS AUF DEN SENDER*/) {
-//	        client.getConnection().send(pdu);
-//	    }
-	    
-		
+        deleteConfWaitListEntry(receivedPdu.getEventUserName());
+        if (waitList.isEmpty()) {
+
+            Vector<String> deployToTheseClients = clients.getClientNameList();
+            ChatPDU conf = new ChatPDU();
+            for(String i : deployToTheseClients) {
+                conf = conf.createConfirmEventPdu(receivedPdu.getUserName(), clients.getRegisteredClientNameList(), receivedPdu);
+                ClientListEntry cl = clients.getClient(i);
+                try {
+                    cl.getConnection().send(conf);
+                } catch (Exception e) {
+                    log.error("Exception beim Senden der Bestätigung an die Clients");
+                    ExceptionHandler.logExceptionAndTerminate(e);
+                }      
+            }              
+        }
+   
 	}
+	
 }

@@ -228,9 +228,9 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 						chatMessageEventAction(receivedPdu);
 						break;
 					
-					case CONFIRM_RESPONSE:
+					case CONFIRM_EVENT:
                         //Client schickt bestätigung
-						confirmResponseEventAction(receivedPdu);
+						confirmEventAction(receivedPdu);
 						break;
 
 					default:

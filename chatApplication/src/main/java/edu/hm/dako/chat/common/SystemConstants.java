@@ -4,6 +4,7 @@ public class SystemConstants {
 
 	// Bezeichnungen der verschiedenen Server-Implementierungen
 	public static final String IMPL_TCP_SIMPLE = "TCPSimple";
+	public static final String IMPL_TCP_ADVANCED ="Advanced Chat";
 
 	// Farben fuer GUI:
 	// Rot fuer die Darstellung falsch eingegebener Werte

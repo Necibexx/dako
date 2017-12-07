@@ -476,15 +476,17 @@ public class ChatPDU implements Serializable {
 	   public static ChatPDU createConfirmEventPdu(String userName, Vector<String> clientList,
 	            ChatPDU receivedPdu) {
 
-	        ChatPDU pdu = new ChatPDU();
-	        pdu.setPduType(PduType.CONFIRM_EVENT);
-	        pdu.setUserName(userName);
-	        pdu.setEventUserName(userName);
-	        pdu.setServerThreadName(Thread.currentThread().getName());
-	        pdu.setClientThreadName(receivedPdu.getClientThreadName());
-	        pdu.setClients(clientList);
-	        pdu.setClientStatus(ClientConversationStatus.REGISTERED);
-	        return pdu;
+	      ChatPDU pdu = new ChatPDU();
+	      pdu.setPduType(PduType.CONFIRM_EVENT);
+	      pdu.setUserName(userName);
+	      pdu.setEventUserName(receivedPdu.getEventUserName());
+	      pdu.setServerThreadName(Thread.currentThread().getName());
+	      pdu.setClientThreadName(receivedPdu.getClientThreadName());
+	   
+	      // was wird hier gemacht bei setClients? N.G.
+	      pdu.setClients(clientList);
+	      pdu.setClientStatus(ClientConversationStatus.REGISTERED);
+	      return pdu;
 	    }
        /**
         * Erstellt eine Confirm PDU, die dem Client der ein Confirm Event geschickt hat geschickt wird.

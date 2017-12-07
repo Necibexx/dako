@@ -16,7 +16,7 @@ import edu.hm.dako.chat.connection.Connection;
  */
 public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerThread {
 
-	private static Log log = LogFactory.getLog(SimpleMessageListenerThreadImpl.class);
+	private static Log log = LogFactory.getLog(AdvancedMessageListenerThreadImpl.class);
 
 	public AdvancedMessageListenerThreadImpl(ClientUserInterface userInterface,
 			Connection con, SharedClientData sharedData) {
@@ -61,6 +61,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
 		// Eventzaehler fuer Testzwecke erhoehen
 		sharedClientData.eventCounter.getAndIncrement();
+		
 		int events = SharedClientData.loginEvents.incrementAndGet();
 
 		log.debug(

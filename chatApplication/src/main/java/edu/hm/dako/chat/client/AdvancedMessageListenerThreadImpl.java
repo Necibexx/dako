@@ -125,7 +125,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 			userInterface.setLastServerTime(receivedPdu.getServerTime());
 
 			// Naechste Chat-Nachricht darf eingegeben werden
-			userInterface.setLock(false);
+			userInterface.setLock(true);
 
 			log.debug(
 					"Chat-Response-PDU fuer Client " + receivedPdu.getUserName() + " empfangen");
@@ -155,8 +155,22 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 				(String) receivedPdu.getMessage());
 	}
 	
-	private void confirmEventAction() {
-		// TODO Auto-generated method stub
+	
+	// Confirm message event Action
+	// Sendet das Confirm Event PDU an alle Clients
+	private void confirmEventAction(ChatPDU receivedPdu) {
+		ChatPDU pdu = ChatPDU.createConfirmEventPdu(receivedPdu.getUserName(), receivedPdu.getClients(), receivedPdu);
+		
+		userInterface.setLock(false);
+
+		
+		try { 
+			connection.send(pdu);
+				 
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
 		
 	}
 
@@ -255,10 +269,10 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
 						break;
 				 
-					case CONFIRM_RESPONSE:
-						// Client bekommt Antwort auf eine Bestätigung die er (selbst) gesendet hat
-						confirmEventAction();
-                        break;			    
+//					case CONFIRM_RESPONSE:
+//						// Client bekommt Antwort auf eine Bestätigung die er (selbst) gesendet hat
+//						confirmEventAction();
+//                        break;			    
 
 					default:
 						log.debug("Ankommende PDU im Zustand " + sharedClientData.status

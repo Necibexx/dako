@@ -22,7 +22,7 @@ import edu.hm.dako.chat.connection.EndOfFileException;
  */
 public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
-	private static Log log = LogFactory.getLog(SimpleChatWorkerThreadImpl.class);
+	private static Log log = LogFactory.getLog(AdvancedChatWorkerThreadImpl.class);
 
 	public AdvancedChatWorkerThreadImpl(Connection con, SharedChatClientList clients,
 			SharedServerCounter counter, ChatServerGuiInterface serverGuiInterface) {
@@ -485,14 +485,17 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 // Wird ausgeführt sobald ein Confirm Event auf der Serverseite empfangen wurde.
 	private void confirmEventAction(ChatPDU receivedPdu) {
 		// TODO Auto-generated method stub
-        deleteConfWaitListEntry(receivedPdu.getEventUserName());
+        log.debug(receivedPdu.toString() + " confirm Event Action aufgerufen\n");
+		deleteConfWaitListEntry(receivedPdu.getEventUserName());
+		log.debug("Waitlist: " + waitList.toString() );
         if (waitList.isEmpty()) {
-
+        	log.debug("WaitList ist leer\n");
             Vector<String> deployToTheseClients = clients.getClientNameList();
             ChatPDU conf = new ChatPDU();
             for(String i : deployToTheseClients) {
                 conf = conf.createConfirmEventPdu(receivedPdu.getUserName(), clients.getRegisteredClientNameList(), receivedPdu);
                 ClientListEntry cl = clients.getClient(i);
+                log.debug(i.toString());
                 try {
                     cl.getConnection().send(conf);
                 } catch (Exception e) {

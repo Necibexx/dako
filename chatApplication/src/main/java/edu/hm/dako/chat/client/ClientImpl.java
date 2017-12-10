@@ -31,15 +31,26 @@ public class ClientImpl extends AbstractChatClient {
 
 		Thread.currentThread().setName("Client");
 		threadName = Thread.currentThread().getName();
-
-		try {
-			// Simple TCP Server erzeugen
-			messageListenerThread = new SimpleMessageListenerThreadImpl(userInterface,
-						connection, sharedClientData);
-
-			messageListenerThread.start();
-		} catch (Exception e) {
-			ExceptionHandler.logException(e);
+		switch (serverType) {
+			case "TCPSimpleImplementation" :
+				try {
+					// Simple TCP Server erzeugen
+					messageListenerThread = new SimpleMessageListenerThreadImpl(userInterface,
+																				connection, sharedClientData);
+					messageListenerThread.start();
+					} catch (Exception e) {
+					  ExceptionHandler.logException(e);
+					} break;
+			case "TCPAdvancedImplementation" :
+				try {
+					// Simple TCP Server erzeugen
+					messageListenerThread = new AdvancedMessageListenerThreadImpl(userInterface,
+																				connection, sharedClientData);
+					messageListenerThread.start();
+					} catch (Exception e) {
+					  ExceptionHandler.logException(e);
+					} break;				
 		}
+
 	}
 }

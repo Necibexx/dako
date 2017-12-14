@@ -17,37 +17,40 @@ public enum PduType {
     LOGIN_EVENT(8, "Login-Event"),
     LOGOUT_EVENT(9, "Logout-Event"),
     CONFIRM_EVENT(10, "Confirm-Event"),
-    CONFIRM_LOGOUT_EVENT(10, "Confirm-Logout-Event"),
-    CONFIRM_LOGIN_EVENT(10, "Confirm-Login-Event"),
-    CONFIRM_RESPONSE(11, "Confirm-Response");
+    CONFIRM_LOGOUT_EVENT(11, "Confirm-Logout-Event"),
+    CONFIRM_LOGIN_EVENT(12, "Confirm-Login-Event");
+    
+//CONFIRM_RESPONSE(11, "Confirm-Response");
 
+    
+   
     private final int id;
     private final String description;
 
     PduType(int id, String description) {
-	this.id = id;
-	this.description = description;
+    this.id = id;
+    this.description = description;
     }
 
     public static PduType getId(int id) {
-	for (PduType e : values()) {
-	    if (e.getId() == id) {
-		return e;
-	    }
-	}
-	return null;
+    for (PduType e : values()) {
+        if (e.getId() == id) {
+        return e;
+        }
+    }
+    return null;
     }
 
     public int getId() {
-	return id;
+    return id;
     }
 
     public String getDescription() {
-	return description;
+    return description;
     }
 
     @Override
     public String toString() {
-	return description;
+    return description;
     }
 }

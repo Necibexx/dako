@@ -153,7 +153,7 @@ public class ClientFxGUI extends Application implements ClientUserInterface {
 				}
 			});
 		}
-	}
+}
 
 	@Override
 	public void setMessageLine(String sender, String message) {

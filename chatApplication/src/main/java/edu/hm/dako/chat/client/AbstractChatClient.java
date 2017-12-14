@@ -23,7 +23,7 @@ import edu.hm.dako.chat.tcp.TcpConnectionFactory;
  */
 public abstract class AbstractChatClient implements ClientCommunication {
 
-	private static Log log = LogFactory.getLog(AbstractChatClient.class);
+	protected static Log log = LogFactory.getLog(AbstractChatClient.class);
 
 	// Username (Login-Kennung) des Clients
 	protected String userName;

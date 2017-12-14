@@ -160,8 +160,9 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 	// Confirm message event Action
 	// Sendet das Confirm Event PDU an alle Clients
 	private void confirmEventAction(ChatPDU receivedPdu) {
-		ChatPDU pdu = ChatPDU.createConfirmEventPdu(receivedPdu.getUserName(), receivedPdu.getClients(), receivedPdu);
+		ChatPDU pdu = ChatPDU.createConfirmEventPdu(sharedClientData.userName, receivedPdu);
 		
+		//sperren des Users
 		userInterface.setLock(false);
 
 		

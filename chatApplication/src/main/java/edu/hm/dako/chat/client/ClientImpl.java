@@ -48,7 +48,7 @@ public class ClientImpl extends AbstractChatClient {
 			} 
 		}  catch (Exception e) {
 			  ExceptionHandler.logException(e);
-			} 
+			}  
 			
 			
 			

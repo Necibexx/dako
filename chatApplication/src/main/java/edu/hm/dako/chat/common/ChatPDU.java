@@ -473,8 +473,7 @@ public class ChatPDU implements Serializable {
      * @param clientThreadName
      * @return
      */     	
-	   public static ChatPDU createConfirmEventPdu(String userName, Vector<String> clientList,
-	            ChatPDU receivedPdu) {
+	   public static ChatPDU createConfirmEventPdu(String userName, ChatPDU receivedPdu) {
 
 	      ChatPDU pdu = new ChatPDU();
 	      pdu.setPduType(PduType.CONFIRM_EVENT);
@@ -483,8 +482,8 @@ public class ChatPDU implements Serializable {
 	      pdu.setServerThreadName(Thread.currentThread().getName());
 	      pdu.setClientThreadName(receivedPdu.getClientThreadName());
 	   
-	      // was wird hier gemacht bei setClients? N.G.
-	      pdu.setClients(clientList);
+	   // was wird hier gemacht bei setClients? N.G.
+	   //   pdu.setClients(clientList);
 	      pdu.setClientStatus(ClientConversationStatus.REGISTERED);
 	      return pdu;
 	    }
@@ -500,17 +499,16 @@ public class ChatPDU implements Serializable {
         * @param clientThreadName
         * @return
         */     	   
-       public static ChatPDU createConfirmLoginEventPdu(String userName, Vector<String> clientList,
-               ChatPDU receivedPdu) {
+       public static ChatPDU createConfirmLoginEventPdu(String userName, ChatPDU receivedPdu) {
 
            ChatPDU pdu = new ChatPDU();
            pdu.setPduType(PduType.CONFIRM_LOGIN_EVENT);
            pdu.setUserName(userName);
-           pdu.setEventUserName(userName);
+           pdu.setEventUserName(receivedPdu.getEventUserName());
            pdu.setServerThreadName(Thread.currentThread().getName());
            pdu.setClientThreadName(receivedPdu.getClientThreadName());
-           pdu.setClients(clientList);
-           pdu.setClientStatus(ClientConversationStatus.REGISTERING);
+        // pdu.setClients(clientList);
+           pdu.setClientStatus(ClientConversationStatus.REGISTERED);
            return pdu;
        }
        /**
@@ -525,16 +523,15 @@ public class ChatPDU implements Serializable {
         * @param clientThreadName
         * @return
         */       
-       public static ChatPDU createConfirmLogoutEventPdu(String userName, Vector<String> clientList,
-               ChatPDU receivedPdu) {
+       public static ChatPDU createConfirmLogoutEventPdu(String userName, ChatPDU receivedPdu) {
 
            ChatPDU pdu = new ChatPDU();
            pdu.setPduType(PduType.CONFIRM_LOGOUT_EVENT);
            pdu.setUserName(userName);
-           pdu.setEventUserName(userName);
+           pdu.setEventUserName(receivedPdu.getEventUserName());
            pdu.setServerThreadName(Thread.currentThread().getName());
            pdu.setClientThreadName(receivedPdu.getClientThreadName());
-           pdu.setClients(clientList);
+       //  pdu.setClients(clientList);
            pdu.setClientStatus(ClientConversationStatus.UNREGISTERING);
            return pdu;
        }

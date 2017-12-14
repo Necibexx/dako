@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import edu.hm.dako.chat.common.ChatPDU;
 import edu.hm.dako.chat.common.ClientConversationStatus;
 import edu.hm.dako.chat.common.ExceptionHandler;
+import edu.hm.dako.chat.common.PduType;
 import edu.hm.dako.chat.connection.Connection;
 
 /**
@@ -126,7 +127,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 			userInterface.setLastServerTime(receivedPdu.getServerTime());
 
 			// Naechste Chat-Nachricht darf eingegeben werden
-			userInterface.setLock(true);
+
 
 			log.debug(
 					"Chat-Response-PDU fuer Client " + receivedPdu.getUserName() + " empfangen");
@@ -140,7 +141,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
 	@Override
 	protected void chatMessageEventAction(ChatPDU receivedPdu) {
-
+        userInterface.setLock(true);
 		log.debug(
 				"Chat-Message-Event-PDU von " + receivedPdu.getEventUserName() + " empfangen");
 
@@ -154,25 +155,32 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 		// Darstellung uebergeben
 		userInterface.setMessageLine(receivedPdu.getEventUserName(),
 				(String) receivedPdu.getMessage());
+		sendConfirmEvent(receivedPdu);
 	}
 	
 	
 	// Confirm message event Action
-	// Sendet das Confirm Event PDU an alle Clients
-	private void confirmEventAction(ChatPDU receivedPdu) {
-		ChatPDU pdu = ChatPDU.createConfirmEventPdu(receivedPdu.getUserName(), receivedPdu.getClients(), receivedPdu);
-		
-		userInterface.setLock(false);
+	// Sendet das Confirm Event PDU an den Server
+	private void sendConfirmEvent(ChatPDU receivedPdu) {
+		ChatPDU pdu = ChatPDU.createConfirmEventPdu(receivedPdu.getUserName(), receivedPdu);
 
-		
 		try { 
 			connection.send(pdu);
-				 
+			log.debug("Client: ConfirmEvent SENT!");	 
+		    userInterface.setMessageLine("STATUS", "received msg CONFIRMED");
 		} catch (Exception e) {
-			
+			log.debug("\n Client: sendConfirmEvent failed\n");
 			e.printStackTrace();
 		}
 		
+	}
+	private void confirmEventAction(ChatPDU receivedPdu) {
+	    try {
+	        if (receivedPdu.getPduType().equals(PduType.CONFIRM_EVENT)) userInterface.setLock(false);
+            log.debug("Server sent Confirmation");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 
 	/**
@@ -230,7 +238,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 						break;
 					
 					case CONFIRM_EVENT:
-                        //Client schickt bestätigung
+                        //SERVER schickt bestï¿½tigung
 						confirmEventAction(receivedPdu);
 						break;
 
@@ -271,7 +279,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 						break;
 				 
 //					case CONFIRM_RESPONSE:
-//						// Client bekommt Antwort auf eine Bestätigung die er (selbst) gesendet hat
+//						// Client bekommt Antwort auf eine Bestï¿½tigung die er (selbst) gesendet hat
 //						confirmEventAction();
 //                        break;			    
 

@@ -33,19 +33,18 @@ public class ClientImpl extends AbstractChatClient {
 		threadName = Thread.currentThread().getName();
 		
 		try {
-			//SERVERTYPAUSWAHL viele grüße david
+			//SERVERTYPAUSWAHL viele grï¿½ï¿½e david
 		
 			if (serverType.equals(SystemConstants.IMPL_TCP_ADVANCED)) {
 				// ADVANCED TCP Server erzeugen
 				log.debug("ADVANCED!!!!");
 				messageListenerThread = new AdvancedMessageListenerThreadImpl(userInterface,
-																		connection, sharedClientData);
-				messageListenerThread.start();	
+																		      connection, sharedClientData);
 			} else {
 				messageListenerThread = new SimpleMessageListenerThreadImpl(userInterface,
-					connection, sharedClientData);
-					messageListenerThread.start();
+				                                                            connection, sharedClientData);	
 			} 
+			messageListenerThread.start();
 		}  catch (Exception e) {
 			  ExceptionHandler.logException(e);
 			} 

@@ -1,4 +1,4 @@
-package edu.hm.dako.chat.server;
+﻿package edu.hm.dako.chat.server;
 
 import java.util.Vector;
 
@@ -29,17 +29,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 		super(con, clients, counter, serverGuiInterface);	    
 	}
-    Vector<String> waitList;
-    
-    
-    public void deleteConfWaitListEntry(String user) {
-        waitList.removeElement(user);
-    }
-    public void addConfWaitListEntry(String user) {
-        waitList.addElement(user);
-    }
-    
-    
+
 	@Override
 	public void run() {
 		log.debug(
@@ -132,6 +122,8 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 			try {
 				clients.getClient(userName).getConnection().send(responsePdu);
+				client.setWaitList(clients.createWaitList(userName));
+				
 			} catch (Exception e) {
 				log.debug("Senden einer Login-Response-PDU an " + userName + " fehlgeschlagen");
 				log.debug("Exception Message: " + e.getMessage());
@@ -201,7 +193,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 			// Logout Response senden
 			sendLogoutResponse(receivedPdu.getUserName());
-
+			
 			// Worker-Thread des Clients, der den Logout-Request gesendet
 			// hat, auch gleich zum Beenden markieren
 			clients.finish(receivedPdu.getUserName());
@@ -216,6 +208,9 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 		ClientListEntry client = null;
 		clients.setRequestStartTime(receivedPdu.getUserName(), startTime);
 		clients.incrNumberOfReceivedChatMessages(receivedPdu.getUserName());
+
+		client.setWaitList(clients.createWaitList(receivedPdu.getEventUserName()));
+		
 		serverGuiInterface.incrNumberOfRequests();
 		log.debug("Chat-Message-Request-PDU von " + receivedPdu.getUserName()
 				+ " mit Sequenznummer " + receivedPdu.getSequenceNumber() + " empfangen");
@@ -236,7 +231,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 						pdu.setUserName(client.getUserName());
 						client.getConnection().send(pdu);
 						
-						addConfWaitListEntry(client.getUserName());
+						client.setWaitList(clients.createWaitList(client.getUserName()));;
 						
 						log.debug("Chat-Event-PDU an " + client.getUserName() + " gesendet");
 						clients.incrNumberOfSentChatEvents(client.getUserName());
@@ -486,25 +481,31 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	private void confirmEventAction(ChatPDU receivedPdu) {
 		// TODO Auto-generated method stub
         log.debug(receivedPdu.toString() + " confirm Event Action aufgerufen\n");
-		deleteConfWaitListEntry(receivedPdu.getEventUserName());
-		log.debug("Waitlist: " + waitList.toString() );
-        if (waitList.isEmpty()) {
-        	log.debug("WaitList ist leer\n");
-            Vector<String> deployToTheseClients = clients.getClientNameList();
-            ChatPDU conf = new ChatPDU();
-            for(String i : deployToTheseClients) {
-                conf = conf.createConfirmEventPdu(receivedPdu.getUserName(), clients.getRegisteredClientNameList(), receivedPdu);
-                ClientListEntry cl = clients.getClient(i);
-                log.debug(i.toString());
-                try {
-                    cl.getConnection().send(conf);
-                } catch (Exception e) {
-                    log.error("Exception beim Senden der Bestätigung an die Clients");
-                    ExceptionHandler.logExceptionAndTerminate(e);
-                }      
-            }              
-        }
+		try {
+			if (clients.deleteWaitListEntry(receivedPdu.getUserName(), receivedPdu.getEventUserName()) == 0) {
+				sendConfirmEvent(receivedPdu);
+			}
+		} catch (Exception e) {
+			log.debug("Fehler beim behandeln des Confirm Events");
+		}
+        
    
 	}
 	
+	private void sendConfirmEvent(ChatPDU receivedPdu) {
+    	log.debug("WaitList ist leer\n");
+        Vector<String> deployToTheseClients = clients.getClientNameList();
+        ChatPDU conf = new ChatPDU();
+        for(String i : deployToTheseClients) {
+            conf = conf.createConfirmEventPdu(receivedPdu.getUserName(), receivedPdu);
+            ClientListEntry cl = clients.getClient(i);
+            log.debug(i.toString());
+            try {
+                cl.getConnection().send(conf);
+            } catch (Exception e) {
+                log.error("Exception beim Senden der Bestätigung an die Clients");
+                ExceptionHandler.logExceptionAndTerminate(e);
+            }    
+        }  
+	}
 }

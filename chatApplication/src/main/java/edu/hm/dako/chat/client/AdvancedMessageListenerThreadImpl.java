@@ -262,13 +262,8 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
                         // Chat-Nachricht vom Server gesendet
                         chatMessageEventAction(receivedPdu);
                         break;
-                    
-//                    case CONFIRM_EVENT:
-//                        //SERVER schickt best�tigung
-//                        confirmEventAction(receivedPdu);
-//                        break;
-
-                    default:
+                        
+                   default:
                         log.debug("Ankommende PDU im Zustand " + sharedClientData.status
                                 + " wird verworfen");
                     }
@@ -307,8 +302,19 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 //                  case CONFIRM_RESPONSE:
 //                      // Client bekommt Antwort auf eine Best�tigung die er (selbst) gesendet hat
 //                      confirmEventAction();
-//                        break;                
-
+//                        break;    
+                    case CONFIRM_EVENT:
+//                      //SERVER schickt best�tigung
+                      confirmEventAction(receivedPdu);
+                      break;
+                    
+                    case CONFIRM_LOGOUT_EVENT:
+                            confirmEventAction(receivedPdu);
+                            break;                        
+                    case CONFIRM_LOGIN_EVENT:
+                        confirmEventAction(receivedPdu);
+                        break;
+                    
                     default:
                         log.debug("Ankommende PDU im Zustand " + sharedClientData.status
                                 + " wird verworfen");

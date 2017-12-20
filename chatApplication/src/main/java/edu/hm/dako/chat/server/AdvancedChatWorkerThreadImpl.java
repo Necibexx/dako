@@ -103,11 +103,12 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
             clients.changeClientStatus(receivedPdu.getUserName(),
                     ClientConversationStatus.REGISTERING);
             log.debug("User " + receivedPdu.getUserName() + " nun in Clientliste");
-
             userName = receivedPdu.getUserName();
             clientThreadName = receivedPdu.getClientThreadName();
             Thread.currentThread().setName(receivedPdu.getUserName());
             log.debug("Laenge der Clientliste: " + clients.size());
+            
+            serverGuiInterface.incrNumberOfRequests();
             serverGuiInterface.incrNumberOfLoggedInClients();
 
             // Login-Event an alle Clients (auch an den gerade aktuell

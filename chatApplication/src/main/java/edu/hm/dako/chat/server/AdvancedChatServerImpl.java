@@ -61,13 +61,13 @@ public class AdvancedChatServerImpl extends AbstractChatServer {
 					try {
 						// Auf ankommende Verbindungsaufbauwuensche warten
 						System.out.println(
-								"SimpleChatServer wartet auf Verbindungsanfragen von Clients...");
+								"AdvancedChatServer wartet auf Verbindungsanfragen von Clients...");
 
 						Connection connection = socket.accept();
 						log.debug("Neuer Verbindungsaufbauwunsch empfangen");
 
 						// Neuen Workerthread starten
-						executorService.submit(new SimpleChatWorkerThreadImpl(connection, clients,
+						executorService.submit(new AdvancedChatWorkerThreadImpl(connection, clients,
 								counter, serverGuiInterface));
 					} catch (Exception e) {
 						if (socket.isClosed()) {
@@ -115,6 +115,6 @@ public class AdvancedChatServerImpl extends AbstractChatServer {
 		executorService.shutdown();
 		log.debug("Threadpool freigegeben");
 
-		System.out.println("SimpleChatServer beendet sich");
+		System.out.println("AdvancedChatServer beendet sich");
 	}
 }

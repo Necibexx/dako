@@ -3,6 +3,8 @@ package edu.hm.dako.chat.client;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.sun.xml.internal.ws.client.ClientSchemaValidationTube;
+
 import edu.hm.dako.chat.common.ChatPDU;
 import edu.hm.dako.chat.common.ClientConversationStatus;
 import edu.hm.dako.chat.common.ExceptionHandler;
@@ -189,7 +191,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
    
     // Bestätigung Login-Event
     private void confirmLoginEventAction(ChatPDU receivedPdu){
-    	ChatPDU pdu = ChatPDU.createConfirmLoginEventPdu(sharedClientData.userName, <String> clientList, receivedPdu);
+    	ChatPDU pdu = ChatPDU.createConfirmLoginEventPdu(sharedClientData.userName, receivedPdu);
  
     	try {
             connection.send(pdu);

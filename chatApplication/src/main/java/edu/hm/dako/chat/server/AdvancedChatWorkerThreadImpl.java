@@ -120,12 +120,12 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
             // Login Response senden
             ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(userName, receivedPdu);
+            System.out.println("Wait list für Login Confirm wird erstellt");
+            client.setWaitList(clients.createWaitList(userName));
 
             try {
                 clients.getClient(userName).getConnection().send(responsePdu);
-                client.setWaitList(clients.createWaitList(userName));
-                
-            } catch (Exception e) {
+                } catch (Exception e) {
                 log.debug("Senden einer Login-Response-PDU an " + userName + " fehlgeschlagen");
                 log.debug("Exception Message: " + e.getMessage());
             }
@@ -156,6 +156,10 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
     protected void logoutRequestAction(ChatPDU receivedPdu) {
 
         ChatPDU pdu;
+        
+        ClientListEntry client = clients.getClient(receivedPdu.getUserName());
+        client.setWaitList(clients.createWaitList(receivedPdu.getUserName()));      
+        
         logoutCounter.getAndIncrement();
         log.debug("Logout-Request von " + receivedPdu.getUserName() + ", LogoutCount = "
                 + logoutCounter.get());
@@ -206,12 +210,15 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
     @Override
     protected void chatMessageRequestAction(ChatPDU receivedPdu) {
 
+        System.out.println("chat Message Request erhalten von: " + receivedPdu.getUserName());
+        
         ClientListEntry client = null;
         clients.setRequestStartTime(receivedPdu.getUserName(), startTime);
         clients.incrNumberOfReceivedChatMessages(receivedPdu.getUserName());
 
-        client.setWaitList(clients.createWaitList(receivedPdu.getEventUserName()));
-        
+
+        client = clients.getClient(receivedPdu.getUserName());
+        client.setWaitList(clients.createWaitList(receivedPdu.getUserName()));      
         serverGuiInterface.incrNumberOfRequests();
         log.debug("Chat-Message-Request-PDU von " + receivedPdu.getUserName()
                 + " mit Sequenznummer " + receivedPdu.getSequenceNumber() + " empfangen");
@@ -231,9 +238,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
                             && (client.getStatus() != ClientConversationStatus.UNREGISTERED)) {
                         pdu.setUserName(client.getUserName());
                         client.getConnection().send(pdu);
-                        
-                        client.setWaitList(clients.createWaitList(client.getUserName()));;
-                        
+                                               
                         log.debug("Chat-Event-PDU an " + client.getUserName() + " gesendet");
                         clients.incrNumberOfSentChatEvents(client.getUserName());
                         eventCounter.getAndIncrement();
@@ -455,6 +460,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
             
             case CONFIRM_EVENT:
                 // Client best�tigt Empfang einer Nachricht
+               
                 confirmEventAction(receivedPdu);
                 break;
                 
@@ -481,8 +487,10 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 // Wird ausgeführt sobald ein Confirm Event auf der Serverseite empfangen wurde.
     private void confirmEventAction(ChatPDU receivedPdu) {
         // TODO Auto-generated method stub
+        
         log.debug(receivedPdu.toString() + " confirm Event Action aufgerufen\n");
         try {
+            System.out.println("Versuchen, waitlisteintrag zu löschen");
             if (clients.deleteWaitListEntry(receivedPdu.getUserName(), receivedPdu.getEventUserName()) == 0) {
                 sendConfirmEvent(receivedPdu);
             }
@@ -492,9 +500,11 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
         
    
     }
+
+    
     
     private void sendConfirmEvent(ChatPDU receivedPdu) {
-        log.debug("WaitList ist leer\n");
+        System.out.println("WaitList ist leer\n");
         Vector<String> deployToTheseClients = clients.getClientNameList();
         ChatPDU conf = new ChatPDU();
         for(String i : deployToTheseClients) {

@@ -136,6 +136,7 @@ public abstract class AbstractChatClient implements ClientCommunication {
 
 		} catch (Exception e) {
 			log.debug("Senden der Logout-Nachricht nicht moeglich");
+			
 			throw new IOException();
 		}
 	}
@@ -148,7 +149,11 @@ public abstract class AbstractChatClient implements ClientCommunication {
 		requestPdu.setClientStatus(sharedClientData.status);
 		requestPdu.setClientThreadName(Thread.currentThread().getName());
 		requestPdu.setUserName(userName);
-		requestPdu.setMessage(text);
+		if(text != null) {
+		    requestPdu.setMessage(text);
+		} else {
+		    requestPdu.setMessage("");
+		}
 		sharedClientData.messageCounter.getAndIncrement();
 		requestPdu.setSequenceNumber(sharedClientData.messageCounter.get());
 		try {

@@ -73,6 +73,9 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
         } catch (Exception e) {
             ExceptionHandler.logException(e);
         }
+        
+        // Aufruf der confimeLoginEventAction Methode
+        confirmLoginEventAction(receivedPdu);
     }
 
     @Override
@@ -127,7 +130,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
             userInterface.setLastServerTime(receivedPdu.getServerTime());
 
             // Naechste Chat-Nachricht darf eingegeben werden
-
+            userInterface.setLock(false);
 
             log.debug(
                     "Chat-Response-PDU fuer Client " + receivedPdu.getUserName() + " empfangen");
@@ -141,7 +144,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
     @Override
     protected void chatMessageEventAction(ChatPDU receivedPdu) {
-        userInterface.setLock(true);
+        
         log.debug(
                 "Chat-Message-Event-PDU von " + receivedPdu.getEventUserName() + " empfangen");
 
@@ -178,6 +181,18 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
         try {
             if (receivedPdu.getPduType().equals(PduType.CONFIRM_EVENT)) userInterface.setLock(false);
             log.debug("Server sent Confirmation");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+   
+    // Bestätigung Login-Event
+    private void confirmLoginEventAction(ChatPDU receivedPdu){
+    	ChatPDU pdu = ChatPDU.createConfirmLoginEventPdu(sharedClientData.userName, <String> clientList, receivedPdu);
+ 
+    	try {
+            connection.send(pdu);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -237,10 +252,10 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
                         chatMessageEventAction(receivedPdu);
                         break;
                     
-                    case CONFIRM_EVENT:
-                        //SERVER schickt bestï¿½tigung
-                        confirmEventAction(receivedPdu);
-                        break;
+//                    case CONFIRM_EVENT:
+//                        //SERVER schickt bestï¿½tigung
+//                        confirmEventAction(receivedPdu);
+//                        break;
 
                     default:
                         log.debug("Ankommende PDU im Zustand " + sharedClientData.status

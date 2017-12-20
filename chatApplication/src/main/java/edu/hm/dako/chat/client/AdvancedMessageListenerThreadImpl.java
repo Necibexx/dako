@@ -286,8 +286,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
                         break;
 
                     case CHAT_MESSAGE_EVENT:
-                        // Chat-Na
-                        chricht vom Server gesendet
+                        // Chat-Nachricht vom Server gesendet
                         chatMessageEventAction(receivedPdu);
                         break;
 

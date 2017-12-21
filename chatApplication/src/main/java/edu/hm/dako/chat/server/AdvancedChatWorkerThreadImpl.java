@@ -117,25 +117,13 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
             Vector<String> clientList = clients.getClientNameList();
             pdu = ChatPDU.createLoginEventPdu(userName, clientList, receivedPdu);
             sendLoginListUpdateEvent(pdu);
-
-            // Login Response senden
-            ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(userName, receivedPdu);
+//          Waitlist erstellen/Confirm abwarten  
             System.out.println("Wait list für Login Confirm wird erstellt");
             client.setWaitList(clients.createWaitList(userName));
             System.out.println(client.getWaitList().toString());
-
-            try {
-                clients.getClient(userName).getConnection().send(responsePdu);
-                } catch (Exception e) {
-                log.debug("Senden einer Login-Response-PDU an " + userName + " fehlgeschlagen");
-                log.debug("Exception Message: " + e.getMessage());
-            }
-
-            log.debug("Login-Response-PDU an Client " + userName + " gesendet");
-
-            // Zustand des Clients aendern
-            clients.changeClientStatus(userName, ClientConversationStatus.REGISTERED);
-
+            
+            // Login Response senden
+  
         } else {
             // User bereits angemeldet, Fehlermeldung an Client senden,
             // Fehlercode an Client senden
@@ -469,7 +457,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
                 
             case CONFIRM_LOGIN_EVENT:
                 // Client bestätigt Login
-                confirmEventAction(receivedPdu);
+                confirmLoginEventAction(receivedPdu);
                 break;
                 
             case CONFIRM_LOGOUT_EVENT:
@@ -506,10 +494,25 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
         } catch (Exception e) {
             log.debug("Fehler beim behandeln des Confirm Events");
         }
-        
-   
-    }
+      }
+    private void confirmLoginEventAction(ChatPDU receivedPdu) {
+        try {
+            if(clients.deleteWaitListEntry(receivedPdu.getUserName(), receivedPdu.getEventUserName()) == 0) {
+            
+            ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(userName, receivedPdu);
+            clients.getClient(userName).getConnection().send(responsePdu);
+            
+            }
+        } catch (Exception e) {
+            log.debug("Senden einer Login-Response-PDU an " + userName + " fehlgeschlagen");
+            log.debug("Exception Message: " + e.getMessage());
+        }
+        log.debug("Login-Response-PDU an Client " + userName + " gesendet");
 
+        // Zustand des Clients aendern
+        clients.changeClientStatus(userName, ClientConversationStatus.REGISTERED);
+        
+    }
     
     
     private void sendConfirmEvent(ChatPDU receivedPdu) {

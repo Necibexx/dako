@@ -173,11 +173,19 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
             e.printStackTrace();
         }
     }
+    private void confirmLoginEventAction(ChatPDU receivedPdu) {
+        try {
+            if (receivedPdu.getPduType().equals(PduType.CONFIRM_LOGIN_EVENT)) userInterface.setLock(false);
+            log.debug("Server sent Confirmation");
+            System.out.println("Server sent confirmation " + receivedPdu.toString() + "\n");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     // Confirm message event Action
     // Sendet das Confirm Event PDU an den Server
     private void sendConfirmEvent(ChatPDU receivedPdu) {
         ChatPDU pdu = ChatPDU.createConfirmEventPdu(receivedPdu.getUserName(), receivedPdu);
-
         try { 
             connection.send(pdu);
             log.debug("Client: ConfirmEvent SENT!");     
@@ -185,8 +193,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
         } catch (Exception e) {
             log.debug("\n Client: sendConfirmEvent failed\n");
             e.printStackTrace();
-        }
-        
+        }        
     }   
    
     // Best�tigung Login-Event
@@ -263,6 +270,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
                         // Chat-Nachricht vom Server gesendet
                         chatMessageEventAction(receivedPdu);
                         break;
+                     
                         
                    default:
                         log.debug("Ankommende PDU im Zustand " + sharedClientData.status
@@ -313,7 +321,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
                             confirmEventAction(receivedPdu);
                             break;                        
                     case CONFIRM_LOGIN_EVENT:
-                        confirmEventAction(receivedPdu);
+                        confirmLoginEventAction(receivedPdu);
                         break;
                     
                     default:

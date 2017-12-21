@@ -25,7 +25,17 @@ public final class BenchmarkingClientFactory {
 		try {
 
 			switch (param.getImplementationType()) {
+			case TCPAdvancedImplementation:
 
+	             BenchmarkingClientImpl implAdv = new BenchmarkingClientImpl(userInterface,
+	                        benchmarkingGui, param.getImplementationType(), param.getRemoteServerPort(),
+	                        param.getRemoteServerAddress(), numberOfClient, param.getMessageLength(),
+	                        param.getNumberOfMessages(), param.getClientThinkTime(),
+	                        param.getNumberOfRetries(), param.getResponseTimeout(), sharedData,
+	                        getDecoratedFactory(new TcpConnectionFactory()));
+	                return implAdv;
+
+			    
 			case TCPSimpleImplementation:
 
 				BenchmarkingClientImpl impl = new BenchmarkingClientImpl(userInterface,

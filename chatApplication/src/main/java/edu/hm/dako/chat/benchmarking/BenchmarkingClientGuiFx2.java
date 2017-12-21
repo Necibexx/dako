@@ -84,7 +84,9 @@ public class BenchmarkingClientGuiFx2 extends Application
 
 	// Auswahl fuer Comboboxen
 	ObservableList<String> implTypeOptions = FXCollections.observableArrayList(
-			SystemConstants.IMPL_TCP_SIMPLE);
+			SystemConstants.IMPL_TCP_ADVANCED,
+	        SystemConstants.IMPL_TCP_SIMPLE);
+	        
 	ObservableList<String> measureTypeOptions = FXCollections
 			.observableArrayList("Variable Threads", "Variable Length");
 
@@ -108,7 +110,7 @@ public class BenchmarkingClientGuiFx2 extends Application
 	private TextField textFieldSentRequests;
 	private TextField textFieldTestEnd;
 	private TextField textFieldReceivedResponses;
-	private TextField textFieldTestDuration;
+	TextField textFieldTestDuration;
 	private TextField textFieldPlannedEventMessages;
 	private TextField textFieldSentEventMessages;
 	private TextField textFieldReceivedConfirmEvents;
@@ -263,7 +265,8 @@ public class BenchmarkingClientGuiFx2 extends Application
 
 		optionListImplType = createCombobox(implTypeOptions);
 		optionListMeasureType = createCombobox(measureTypeOptions);
-		optionListImplType.setValue(SystemConstants.IMPL_TCP_SIMPLE);
+		optionListImplType.setValue(SystemConstants.IMPL_TCP_ADVANCED);
+//		optionListImplType.setValue(SystemConstants.IMPL_TCP_SIMPLE); 
 		optionListMeasureType.setValue("Variable Threads");
 
 		// Comboboxen zum Pane hinzufuegen und Labels ergaenzen
@@ -1031,7 +1034,12 @@ public class BenchmarkingClientGuiFx2 extends Application
 	private void readComboBoxes() {
 		// Comboboxen auslesen
 		String item = new String(optionListImplType.getValue().toString());
-		if (item.equals(SystemConstants.IMPL_TCP_SIMPLE)) {
+		if (item.equals(SystemConstants.IMPL_TCP_ADVANCED)) {
+            iParam.setImplementationType(
+                    edu.hm.dako.chat.common.ImplementationType.TCPAdvancedImplementation);
+            implType.setTextFill(Color.web(SystemConstants.BLACK_COLOR));
+        } 
+		else if (item.equals(SystemConstants.IMPL_TCP_SIMPLE)) {
 			iParam.setImplementationType(
 					edu.hm.dako.chat.common.ImplementationType.TCPSimpleImplementation);
 			implType.setTextFill(Color.web(SystemConstants.BLACK_COLOR));

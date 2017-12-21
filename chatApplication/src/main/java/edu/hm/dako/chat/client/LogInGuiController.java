@@ -159,7 +159,7 @@ public class LogInGuiController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		comboServerType.getItems().addAll(SystemConstants.IMPL_TCP_SIMPLE);
         comboServerType.getItems().addAll(SystemConstants.IMPL_TCP_ADVANCED);
+		comboServerType.getItems().addAll(SystemConstants.IMPL_TCP_SIMPLE);
 	}
 }

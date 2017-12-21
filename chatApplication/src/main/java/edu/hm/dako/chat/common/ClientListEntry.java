@@ -192,6 +192,7 @@ public class ClientListEntry {
 	public synchronized void incrNumberOfReceivedChatMessages() {
 		this.numberOfReceivedChatMessages++;
 	}
+	
 
 	public synchronized void incrNumberOfRetries() {
 		this.numberOfRetries++;

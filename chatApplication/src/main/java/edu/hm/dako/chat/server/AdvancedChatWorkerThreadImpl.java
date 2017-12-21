@@ -122,6 +122,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
             ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(userName, receivedPdu);
             System.out.println("Wait list für Login Confirm wird erstellt");
             client.setWaitList(clients.createWaitList(userName));
+            System.out.println(client.getWaitList().toString());
 
             try {
                 clients.getClient(userName).getConnection().send(responsePdu);
@@ -158,7 +159,8 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
         ChatPDU pdu;
         
         ClientListEntry client = clients.getClient(receivedPdu.getUserName());
-        client.setWaitList(clients.createWaitList(receivedPdu.getUserName()));      
+        client.setWaitList(clients.createWaitList(receivedPdu.getUserName())); 
+        System.out.println(client.getWaitList().toString());
         
         logoutCounter.getAndIncrement();
         log.debug("Logout-Request von " + receivedPdu.getUserName() + ", LogoutCount = "
@@ -219,6 +221,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
         client = clients.getClient(receivedPdu.getUserName());
         client.setWaitList(clients.createWaitList(receivedPdu.getUserName()));      
+        System.out.println(client.getWaitList().toString());
         serverGuiInterface.incrNumberOfRequests();
         log.debug("Chat-Message-Request-PDU von " + receivedPdu.getUserName()
                 + " mit Sequenznummer " + receivedPdu.getSequenceNumber() + " empfangen");
@@ -487,13 +490,19 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 // Wird ausgeführt sobald ein Confirm Event auf der Serverseite empfangen wurde.
     private void confirmEventAction(ChatPDU receivedPdu) {
         // TODO Auto-generated method stub
-        
         log.debug(receivedPdu.toString() + " confirm Event Action aufgerufen\n");
+        System.out.println("Confirm Event beim Server eingegangen!" + receivedPdu.getUserName());
         try {
+            confirmCounter.getAndIncrement();
+            
             System.out.println("Versuchen, waitlisteintrag zu löschen");
+            System.out.println("Waitlist vorher" + clients.getClient(receivedPdu.getUserName()).getWaitList().toString());
+            
             if (clients.deleteWaitListEntry(receivedPdu.getUserName(), receivedPdu.getEventUserName()) == 0) {
                 sendConfirmEvent(receivedPdu);
             }
+            
+            System.out.println("Waitlist nachher" + clients.getClient(receivedPdu.getUserName()).getWaitList().toString());
         } catch (Exception e) {
             log.debug("Fehler beim behandeln des Confirm Events");
         }
@@ -513,6 +522,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
             log.debug(i.toString());
             try {
                 cl.getConnection().send(conf);
+                
             } catch (Exception e) {
                 log.error("Exception beim Senden der Bestätigung an die Clients");
                 ExceptionHandler.logExceptionAndTerminate(e);

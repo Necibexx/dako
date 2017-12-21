@@ -100,8 +100,8 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 
 	// Moegliche Belegungen des Implementierungsfeldes in der GUI
 	ObservableList<String> implTypeOptions = FXCollections.observableArrayList(
-			// CY: SystemConstants.IMPL_TCP_ADVANCED hinzugefügt
-			SystemConstants.IMPL_TCP_SIMPLE, SystemConstants.IMPL_TCP_ADVANCED);
+			// CY: SystemConstants.IMPL_TCP_ADVANCED hinzugefï¿½gt
+	        SystemConstants.IMPL_TCP_ADVANCED, SystemConstants.IMPL_TCP_SIMPLE);
 
 	/**
 	 * Konstruktion der ServerGUI

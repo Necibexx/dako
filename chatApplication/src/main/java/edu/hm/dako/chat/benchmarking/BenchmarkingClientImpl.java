@@ -112,7 +112,7 @@ public class BenchmarkingClientImpl extends AbstractChatClient
 		this.nrOfRetries = numberOfRetries;
 		this.responseTimeout = responseTimeout;
 		this.sharedStatistics = sharedStatistics;
-		startMessageListenerThread();
+		startMessageListenerThread(); 
 	}
 
 	/**

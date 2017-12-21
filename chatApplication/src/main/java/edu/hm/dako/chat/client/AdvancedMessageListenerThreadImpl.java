@@ -168,6 +168,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
         try {
             if (receivedPdu.getPduType().equals(PduType.CONFIRM_EVENT)) userInterface.setLock(false);
             log.debug("Server sent Confirmation");
+            System.out.println("Server sent confirmation " + receivedPdu.toString() + "\n");
         } catch (Exception e) {
             e.printStackTrace();
         }

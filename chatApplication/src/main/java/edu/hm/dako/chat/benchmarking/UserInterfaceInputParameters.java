@@ -44,7 +44,8 @@ public class UserInterfaceInputParameters {
 		numberOfMessages = 5;
 		remoteServerPort = 50000;
 		remoteServerAddress = "127.0.0.1";
-		implementationType = ImplementationType.TCPSimpleImplementation;
+//		implementationType = ImplementationType.TCPSimpleImplementation;
+      implementationType = ImplementationType.TCPAdvancedImplementation;
 		measurementType = MeasurementType.VarThreads;
 	}
 
@@ -60,11 +61,17 @@ public class UserInterfaceInputParameters {
 
 		switch (type) {
 		
+		case TCPAdvancedImplementation:
+		    returnString = "TCPAdvanced-Implementation";
+		    break;
+		
 		case TCPSimpleImplementation:
 			returnString = "TCPSimple-Implementation";
 			break;
 
+
 		default:
+		    System.out.println("Default Case!!");
 			break;
 		}
 

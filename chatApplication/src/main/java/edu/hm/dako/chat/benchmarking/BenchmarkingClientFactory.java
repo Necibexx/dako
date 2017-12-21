@@ -26,7 +26,7 @@ public final class BenchmarkingClientFactory {
 
 			switch (param.getImplementationType()) {
 			case TCPAdvancedImplementation:
-
+			    System.out.println("Benchmark: TCP Advanced aufgerufen");
 	             BenchmarkingClientImpl implAdv = new BenchmarkingClientImpl(userInterface,
 	                        benchmarkingGui, param.getImplementationType(), param.getRemoteServerPort(),
 	                        param.getRemoteServerAddress(), numberOfClient, param.getMessageLength(),
@@ -37,7 +37,7 @@ public final class BenchmarkingClientFactory {
 
 			    
 			case TCPSimpleImplementation:
-
+			    System.out.println("Benchmark: TCPSimpleImplementation");
 				BenchmarkingClientImpl impl = new BenchmarkingClientImpl(userInterface,
 						benchmarkingGui, param.getImplementationType(), param.getRemoteServerPort(),
 						param.getRemoteServerAddress(), numberOfClient, param.getMessageLength(),

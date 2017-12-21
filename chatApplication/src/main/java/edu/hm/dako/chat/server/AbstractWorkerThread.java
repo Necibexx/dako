@@ -89,4 +89,13 @@ public abstract class AbstractWorkerThread extends Thread {
 	 * @throws Exception
 	 */
 	protected abstract void handleIncomingMessage() throws Exception;
+	
+	
+	/** ToDo
+	 * Senden eines Login-List-Update-Event an alle angemeldeten Clients
+	 * 
+	 * @param pdu
+	 * 				zu sendende PDU
+	 */
+	protected abstract void sendLoginListUpdateEvent(ChatPDU pdu);
 }

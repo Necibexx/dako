@@ -198,9 +198,9 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
             e.printStackTrace();
         }
     }
-    // Best�tigung Login-Event
+    // Best�tigung Logout-Event
     private void sendLogoutConfirmEvent(ChatPDU receivedPdu){
-        ChatPDU pdu = ChatPDU.createConfirmLoginEventPdu(sharedClientData.userName, receivedPdu);
+        ChatPDU pdu = ChatPDU.createConfirmLogoutEventPdu(sharedClientData.userName, receivedPdu);
  
         try {
             connection.send(pdu);

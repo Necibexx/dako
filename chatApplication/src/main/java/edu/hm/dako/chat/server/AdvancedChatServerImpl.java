@@ -15,9 +15,9 @@ import javafx.concurrent.Task;
 
 /**
  * <p/>
- * Simple-Chat-Server-Implementierung
+ * Advanced-Chat-Server-Implementierung
  *
- * @author Peter Mandl
+ * @author David, Nesrin, Cigdem, Bettina 
  */
 public class AdvancedChatServerImpl extends AbstractChatServer {
 

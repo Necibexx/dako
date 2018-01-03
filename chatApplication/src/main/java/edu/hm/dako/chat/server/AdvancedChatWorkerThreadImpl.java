@@ -108,6 +108,12 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
             Thread.currentThread().setName(receivedPdu.getUserName());
             log.debug("Laenge der Clientliste: " + clients.size());
             
+//          Waitlist erstellen/Confirm abwarten  
+            System.out.println("Wait list für Login Confirm wird erstellt");
+            //client.setWaitList(clients.createWaitList(userName));
+            clients.createWaitList(userName);
+            System.out.println(client.getWaitList().toString());
+            
             serverGuiInterface.incrNumberOfRequests();
             serverGuiInterface.incrNumberOfLoggedInClients();
 
@@ -117,10 +123,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
             Vector<String> clientList = clients.getClientNameList();
             pdu = ChatPDU.createLoginEventPdu(userName, clientList, receivedPdu);
             sendLoginListUpdateEvent(pdu);
-//          Waitlist erstellen/Confirm abwarten  
-            System.out.println("Wait list für Login Confirm wird erstellt");
-            client.setWaitList(clients.createWaitList(userName));
-            System.out.println(client.getWaitList().toString());
+
             
             // Login Response senden
   
@@ -216,6 +219,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
         if (!clients.existsClient(receivedPdu.getUserName())) {
             log.debug("User nicht in Clientliste: " + receivedPdu.getUserName());
+            
         } else {
             // Liste der betroffenen Clients ermitteln
             Vector<String> sendList = clients.getClientNameList();
@@ -224,6 +228,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
             // Event an Clients senden
             for (String s : new Vector<String>(sendList)) {
                 client = clients.getClient(s);
+                
                 try {
                     if ((client != null)
                             && (client.getStatus() != ClientConversationStatus.UNREGISTERED)) {
@@ -495,9 +500,9 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
             log.debug("Fehler beim behandeln des Confirm Events");
         }
       }
-    private void confirmLoginEventAction(ChatPDU receivedPdu) {
+    private synchronized void confirmLoginEventAction(ChatPDU receivedPdu) {
         try {
-            if(clients.deleteWaitListEntry(receivedPdu.getUserName(), receivedPdu.getEventUserName()) == 0) {
+            if(clients.deleteWaitListEntry(receivedPdu.getEventUserName(), receivedPdu.getUserName()) == 0) {
             
             ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(userName, receivedPdu);
             clients.getClient(userName).getConnection().send(responsePdu);
@@ -520,7 +525,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
         Vector<String> deployToTheseClients = clients.getClientNameList();
         ChatPDU conf = new ChatPDU();
         for(String i : deployToTheseClients) {
-            conf = conf.createConfirmEventPdu(receivedPdu.getUserName(), receivedPdu);
+            conf = ChatPDU.createConfirmEventPdu(userName, receivedPdu);
             ClientListEntry cl = clients.getClient(i);
             log.debug(i.toString());
             try {

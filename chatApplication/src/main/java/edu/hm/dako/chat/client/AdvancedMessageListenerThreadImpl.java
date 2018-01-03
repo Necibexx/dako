@@ -272,6 +272,11 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
                         break;
                      
                         
+                    case CONFIRM_LOGIN_EVENT:
+                        confirmLoginEventAction(receivedPdu);
+                        break;
+                    
+                        
                    default:
                         log.debug("Ankommende PDU im Zustand " + sharedClientData.status
                                 + " wird verworfen");
@@ -319,7 +324,8 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
                     
                     case CONFIRM_LOGOUT_EVENT:
                             confirmEventAction(receivedPdu);
-                            break;                        
+                            break;  
+                            
                     case CONFIRM_LOGIN_EVENT:
                         confirmLoginEventAction(receivedPdu);
                         break;

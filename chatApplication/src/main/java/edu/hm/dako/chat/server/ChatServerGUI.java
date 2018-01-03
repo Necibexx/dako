@@ -443,7 +443,8 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 	private void startChatServer(String implType, int serverPort, int sendBufferSize,
 			int receiveBufferSize) throws Exception {
 		
-		// CY:
+		// Erweiterung des Simple Server Zugriff mit Advanced
+		// NECIBEDA
 		ImplementationType serverImpl = ImplementationType.TCPAdvancedImplementation;
 		if (implType.equals(SystemConstants.IMPL_TCP_ADVANCED)) {
 			serverImpl = ImplementationType.TCPAdvancedImplementation;

@@ -1,8 +1,11 @@
 package edu.hm.dako.chat.client;
 
+import java.util.Vector;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.sun.security.ntlm.Client;
 import com.sun.xml.internal.ws.client.ClientSchemaValidationTube;
 
 import edu.hm.dako.chat.common.ChatPDU;
@@ -14,10 +17,11 @@ import edu.hm.dako.chat.connection.Connection;
 /**
  * Thread wartet auf ankommende Nachrichten vom Server und bearbeitet diese.
  * 
- * @author Peter Mandl
+ * @author Nesrin Güney, Cigdem Yildiz, Bettina Hainzinger, David Muckenfuss
  *
  */
 public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerThread {
+	
 
     private static Log log = LogFactory.getLog(AdvancedMessageListenerThreadImpl.class);
 
@@ -72,12 +76,16 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
         try {
             handleUserListEvent(receivedPdu);
+            
+            // Aufruf der sendLoginConfirmEvent Methode als Bestätigung dass dass Event beim Client angekommen ist
+            // NECIBEDA
+            sendLoginConfirmEvent(receivedPdu);
+        
+            
         } catch (Exception e) {
             ExceptionHandler.logException(e);
         }
         
-        // Aufruf der confimeLoginEventAction Methode
-        sendLoginConfirmEvent(receivedPdu);
     }
 
     @Override
@@ -108,7 +116,11 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
         try {
             handleUserListEvent(receivedPdu);
+            
+            // Aufruf der sendLogoutConfirmEvent Methode als Bestätigung dass das Event beim Client angekommen ist
+            // NECIBEDA
             sendLogoutConfirmEvent(receivedPdu);
+            
         } catch (Exception e) {
             ExceptionHandler.logException(e);
         }
@@ -157,35 +169,91 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
         log.debug("MessageEventCounter: " + events);
 
+        // Aufruf der sendConfirmEvent Methode als Bestätigung dass das Event beim Client angekommen ist
+        // NECIBEDA
+        sendConfirmEvent(receivedPdu);
+        
         // Empfangene Chat-Nachricht an User Interface zur
         // Darstellung uebergeben
         userInterface.setMessageLine(receivedPdu.getEventUserName(),
                 (String) receivedPdu.getMessage());
-        sendConfirmEvent(receivedPdu);
+        
+               
     }
 
-    private void confirmEventAction(ChatPDU receivedPdu) {
-        try {
-            if (receivedPdu.getPduType().equals(PduType.CONFIRM_EVENT)) userInterface.setLock(false);
-            log.debug("Server sent Confirmation");
-            System.out.println("Server sent confirmation " + receivedPdu.toString() + "\n");
-        } catch (Exception e) {
+ 
+//    private void confirmEventAction(ChatPDU receivedPdu) {
+//        try {
+//            if (receivedPdu.getPduType().equals(PduType.CONFIRM_EVENT)) userInterface.setLock(false);
+//            log.debug("Server sent Confirmation");
+//            System.out.println("Server sent confirmation " + receivedPdu.toString() + "\n");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//    private void confirmLoginEventAction(ChatPDU receivedPdu) {
+//        try {
+//            if (receivedPdu.getPduType().equals(PduType.CONFIRM_LOGIN_EVENT)) userInterface.setLock(false);
+//            log.debug("Server sent Confirmation");
+//            System.out.println("Server sent confirmation " + receivedPdu.toString() + "\n");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+   
+   
+    /**
+     * Bestätigung des Login-Confirm-Events:
+     * Erstellung einer Login-Event-PDU und senden der PDU an den Server
+     * 
+     * @author NECIBEDA
+     * @param receivedPdu
+     */
+     private void sendLoginConfirmEvent(ChatPDU Pdu){    	
+		
+
+		ChatPDU pdu = ChatPDU.createConfirmLoginEventPdu(sharedClientData.userName, Pdu);
+		 
+    	try {
+            connection.send(pdu);
+            log.debug("Client: LoginConfirmEvent SENT!");     
+            userInterface.setMessageLine("STATUS", "Login is CONFIRMED");
+    } catch (Exception e) {
+        	log.debug("\n Client: sendLoginConfirmEvent failed\n");
             e.printStackTrace();
         }
     }
-    private void confirmLoginEventAction(ChatPDU receivedPdu) {
+    
+    /**
+     * Bestätigung des Logout-Confirm-Events:
+     * Erstellung einer Logout-Event-PDU und senden der PDU an den Server
+     * 
+     * @author NECIBEDA
+     * @param receivedPdu
+     */
+    private void sendLogoutConfirmEvent(ChatPDU Pdu){
+        ChatPDU pdu = ChatPDU.createConfirmLogoutEventPdu(sharedClientData.userName, Pdu);
+ 
         try {
-            if (receivedPdu.getPduType().equals(PduType.CONFIRM_LOGIN_EVENT)) userInterface.setLock(false);
-            log.debug("Server sent Confirmation");
-            System.out.println("Server sent confirmation " + receivedPdu.toString() + "\n");
+            connection.send(pdu);
+            log.debug("Client: LogoutConfirmEvent SENT!");     
+            userInterface.setMessageLine("STATUS", "Logout is CONFIRMED");
         } catch (Exception e) {
+        	log.debug("\n Client: sendLogoutConfirmEvent failed\n");
             e.printStackTrace();
         }
     }
-    // Confirm message event Action
-    // Sendet das Confirm Event PDU an den Server
-    private void sendConfirmEvent(ChatPDU receivedPdu) {
-        ChatPDU pdu = ChatPDU.createConfirmEventPdu(receivedPdu.getUserName(), receivedPdu);
+    
+    
+   /**
+    * Bestätigung des Message-Confirm-Events:
+    * Erstellung einer Message-Event-PDU und senden der PDU an den Server
+    * 
+    * @author NECIBEDA
+    * @param receivedPdu
+    */
+    private void sendConfirmEvent(ChatPDU Pdu) {
+        ChatPDU pdu = ChatPDU.createConfirmEventPdu(sharedClientData.userName, Pdu);
         try { 
             connection.send(pdu);
             log.debug("Client: ConfirmEvent SENT!");     
@@ -195,27 +263,6 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
             e.printStackTrace();
         }        
     }   
-   
-    // Bestï¿½tigung Login-Event
-    private void sendLoginConfirmEvent(ChatPDU receivedPdu){
-    	ChatPDU pdu = ChatPDU.createConfirmLoginEventPdu(sharedClientData.userName, receivedPdu);
- 
-    	try {
-            connection.send(pdu);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    // Bestï¿½tigung Logout-Event
-    private void sendLogoutConfirmEvent(ChatPDU receivedPdu){
-        ChatPDU pdu = ChatPDU.createConfirmLogoutEventPdu(sharedClientData.userName, receivedPdu);
- 
-        try {
-            connection.send(pdu);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Bearbeitung aller vom Server ankommenden Nachrichten
@@ -272,9 +319,9 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
                         break;
                      
                         
-                    case CONFIRM_LOGIN_EVENT:
-                        confirmLoginEventAction(receivedPdu);
-                        break;
+//                    case CONFIRM_LOGIN_EVENT:
+//                        confirmLoginEventAction(receivedPdu);
+//                        break;
                     
                         
                    default:
@@ -313,23 +360,20 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
                         break;
                  
-//                  case CONFIRM_RESPONSE:
-//                      // Client bekommt Antwort auf eine Bestï¿½tigung die er (selbst) gesendet hat
-//                      confirmEventAction();
-//                        break;    
-                    case CONFIRM_EVENT:
-//                      //SERVER schickt bestï¿½tigung
-                      confirmEventAction(receivedPdu);
-                      break;
-                    
-                    case CONFIRM_LOGOUT_EVENT:
-                            confirmEventAction(receivedPdu);
-                            break;  
-                            
-                    case CONFIRM_LOGIN_EVENT:
-                        confirmLoginEventAction(receivedPdu);
-                        break;
-                    
+  
+//                    case CONFIRM_EVENT:
+////                      //SERVER schickt bestï¿½tigung
+//                      confirmEventAction(receivedPdu);
+//                      break;
+//                    
+//                    case CONFIRM_LOGOUT_EVENT:
+//                            confirmEventAction(receivedPdu);
+//                            break;  
+//                            
+//                    case CONFIRM_LOGIN_EVENT:
+//                        confirmLoginEventAction(receivedPdu);
+//                        break;
+//                    
                     default:
                         log.debug("Ankommende PDU im Zustand " + sharedClientData.status
                                 + " wird verworfen");

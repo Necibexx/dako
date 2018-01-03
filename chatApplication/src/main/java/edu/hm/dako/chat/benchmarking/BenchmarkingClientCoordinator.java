@@ -41,7 +41,7 @@ public class BenchmarkingClientCoordinator extends Thread
 
 	// GUI-Schnittstelle
 	BenchmarkingClientUserInterface benchmarkingClientGui;
-
+	
 	// Anzahl aller Requests, die auszufuehren sind
 	long numberOfAllRequests;
 

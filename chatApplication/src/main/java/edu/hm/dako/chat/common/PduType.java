@@ -20,9 +20,7 @@ public enum PduType {
     CONFIRM_LOGOUT_EVENT(11, "Confirm-Logout-Event"),
     CONFIRM_LOGIN_EVENT(12, "Confirm-Login-Event");
     
-//CONFIRM_RESPONSE(11, "Confirm-Response");
-
-    
+   
    
     private final int id;
     private final String description;

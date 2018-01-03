@@ -216,7 +216,7 @@ public class BenchmarkingClientImpl extends AbstractChatClient
 
 			sharedStatistics.incrNumberOfLoggedOutClients();
 
-			// TODO: Derzeit werden in der Progressbar Loging und Logout nicht
+			// TODO: Derzeit werden in der Progressbar Login und Logout nicht
 			// beruecksichtigt
 			// benchmarkingGui.countUpProgressTask();
 

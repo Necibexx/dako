@@ -266,7 +266,7 @@ public class BenchmarkingClientGuiFx2 extends Application
 		optionListImplType = createCombobox(implTypeOptions);
 		optionListMeasureType = createCombobox(measureTypeOptions);
 		optionListImplType.setValue(SystemConstants.IMPL_TCP_ADVANCED);
-//		optionListImplType.setValue(SystemConstants.IMPL_TCP_SIMPLE); 
+		optionListImplType.setValue(SystemConstants.IMPL_TCP_SIMPLE); 
 		optionListMeasureType.setValue("Variable Threads");
 
 		// Comboboxen zum Pane hinzufuegen und Labels ergaenzen

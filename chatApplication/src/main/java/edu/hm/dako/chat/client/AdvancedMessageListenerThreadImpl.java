@@ -96,7 +96,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
         sharedClientData.status = ClientConversationStatus.UNREGISTERED;
 
         userInterface.setSessionStatisticsCounter(sharedClientData.eventCounter.longValue(),
-                sharedClientData.confirmCounter.longValue(), 0, 0, 0);
+                receivedPdu.getNumberOfReceivedConfirms(), 0, 0, 0);
 
         log.debug("Vom Client gesendete Chat-Nachrichten:  "
                 + sharedClientData.messageCounter.get());

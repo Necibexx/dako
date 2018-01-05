@@ -40,12 +40,12 @@ public class UserInterfaceInputParameters {
 	public UserInterfaceInputParameters() {
 		numberOfClients = 2;
 		clientThinkTime = 1;
-		messageLength = 100;
+		messageLength = 100; 
 		numberOfMessages = 5;
 		remoteServerPort = 50000;
 		remoteServerAddress = "127.0.0.1";
-//		implementationType = ImplementationType.TCPSimpleImplementation;
-      implementationType = ImplementationType.TCPAdvancedImplementation;
+		implementationType = ImplementationType.TCPSimpleImplementation;
+        implementationType = ImplementationType.TCPAdvancedImplementation;
 		measurementType = MeasurementType.VarThreads;
 	}
 

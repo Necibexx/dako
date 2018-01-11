@@ -116,7 +116,6 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			Thread.currentThread().setName(receivedPdu.getUserName());
 			log.debug("Laenge der Clientliste: " + clients.size());
 
-			//serverGuiInterface.incrNumberOfRequests();
 			serverGuiInterface.incrNumberOfLoggedInClients();
 
 			// Login-Event an alle Clients (auch an den gerade aktuell
@@ -128,19 +127,6 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			// Login Response senden fällt nach unten (nach: confirmLoginEventAction)
 			// NECIBEDA
 			// ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(userName, receivedPdu);
-
-			// try {
-			// clients.getClient(userName).getConnection().send(responsePdu);
-			// } catch (Exception e) {
-			// log.debug("Senden einer Login-Response-PDU an " + userName + "
-			// fehlgeschlagen");
-			// log.debug("Exception Message: " + e.getMessage());
-			// }
-			//
-			// log.debug("Login-Response-PDU an Client " + userName + " gesendet");
-			//
-			// // Zustand des Clients aendern
-			// clients.changeClientStatus(userName, ClientConversationStatus.REGISTERED);
 
 		} else {
 			// User bereits angemeldet, Fehlermeldung an Client senden,
@@ -166,10 +152,6 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 		// // Ausgabe der aktuellen Clients in der Liste
 		// // NECIBEDA
-		// ClientListEntry client = clients.getClient(receivedPdu.getUserName());
-		// client.setWaitList(clients.createWaitList(receivedPdu.getUserName()));
-		// System.out.println(client.getWaitList().toString());
-
 		logoutCounter.getAndIncrement();
 		log.debug("Logout-Request von " + receivedPdu.getUserName() + ", LogoutCount = " + logoutCounter.get());
 
@@ -186,42 +168,12 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			// Erstellen der Waitlist und Ausgabe der aktuellen Clientliste
 			// NECIBEDA
 			clients.createWaitList(receivedPdu.getUserName());
-		//	ClientListEntry client = clients.getClient(receivedPdu.getUserName());
-		//	System.out.println(client.getWaitList().toString());
 
 			clients.changeClientStatus(receivedPdu.getUserName(), ClientConversationStatus.UNREGISTERING);
 			sendLoginListUpdateEvent(pdu);
 
 			// Response fällt nach unten (ConfirmLogoutEventAction)
 			// NECIBEDA
-
-			// serverGuiInterface.decrNumberOfLoggedInClients();
-			//
-			// // Der Thread muss hier noch warten, bevor ein Logout-Response gesendet
-			// // wird, da sich sonst ein Client abmeldet, bevor er seinen letzten Event
-			// // empfangen hat. das funktioniert nicht bei einer grossen Anzahl an
-			// // Clients (kalkulierte Events stimmen dann nicht mit tatsaechlich
-			// // empfangenen Events ueberein.
-			// // In der Advanced-Variante wird noch ein Confirm gesendet, das ist
-			// // sicherer.
-			//
-			// try {
-			// Thread.sleep(1000);
-			// } catch (Exception e) {
-			// ExceptionHandler.logException(e);
-			// }
-
-			// clients.changeClientStatus(receivedPdu.getUserName(),
-			// ClientConversationStatus.UNREGISTERED);
-			//
-			// // Logout Response senden
-			// sendLogoutResponse(receivedPdu.getUserName());
-			//
-			// // Worker-Thread des Clients, der den Logout-Request gesendet
-			// // hat, auch gleich zum Beenden markieren
-			// clients.finish(receivedPdu.getUserName());
-			// log.debug("Laenge der Clientliste beim Vormerken zum Loeschen von "
-			// + receivedPdu.getUserName() + ": " + clients.size());
 		}
 	}
 
@@ -239,9 +191,6 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 		// Ausgabe der aktuellen Clients in der Liste
 		// NECIBEDA
-		// client = clients.getClient(receivedPdu.getUserName());
-		// client.setWaitList(clients.createWaitList(receivedPdu.getUserName()));
-		// System.out.println(client.getWaitList().toString());
 
 		if (!clients.existsClient(receivedPdu.getUserName())) {
 			log.debug("User nicht in Clientliste: " + receivedPdu.getUserName());
@@ -282,27 +231,6 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			// Response fällt nach unten (ConfirmEventAction)
 			// NECIBEDA
 			
-//			client = clients.getClient(receivedPdu.getUserName());
-//			if (client != null) {
-//				ChatPDU responsePdu = ChatPDU.createChatMessageResponsePdu(receivedPdu.getUserName(), 0, 0, 0, 0,
-//						client.getNumberOfReceivedChatMessages(), receivedPdu.getClientThreadName(),
-//						(System.nanoTime() - client.getStartTime()));
-//
-//				if (responsePdu.getServerTime() / 1000000 > 100) {
-//					log.debug(Thread.currentThread().getName()
-//							+ ", Benoetigte Serverzeit vor dem Senden der Response-Nachricht > 100 ms: "
-//							+ responsePdu.getServerTime() + " ns = " + responsePdu.getServerTime() / 1000000 + " ms");
-//				}
-//
-//				try {
-//					client.getConnection().send(responsePdu);
-//					log.debug("Chat-Message-Response-PDU an " + receivedPdu.getUserName() + " gesendet");
-//				} catch (Exception e) {
-//					log.debug("Senden einer Chat-Message-Response-PDU an " + client.getUserName() + " nicht moeglich");
-//					ExceptionHandler.logExceptionAndTerminate(e);
-//				}
-//			}
-//			log.debug("Aktuelle Laenge der Clientliste: " + clients.size());
 		}
 	}
 
@@ -390,14 +318,6 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			}
 		}
 
-//		// Garbage Collection in der Clientliste durchfuehren
-//		Vector<String> deletedClients = clients.gcClientList();
-//		if (deletedClients.contains(userName)) {
-//			log.debug("Ueber Garbage Collector ermittelt: Laufender Worker-Thread fuer " + userName
-//					+ " kann beendet werden");
-//			finished = true;
-//			return true;
-//		}
 		return false;
 	}
 
@@ -653,48 +573,3 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 		}
 	}
 }
-	
-
-
-
-	// // TODO Auto-generated method stub
-	// log.debug(receivedPdu.toString() + " confirm Event Action aufgerufen\n");
-	// System.out.println("Confirm Event beim Server eingegangen!" +
-	// receivedPdu.getUserName());
-	// try {
-	// confirmCounter.getAndIncrement();
-	//
-	// System.out.println("Versuchen, waitlisteintrag zu löschen");
-	// System.out.println("Waitlist vorher" +
-	// clients.getClient(receivedPdu.getUserName()).getWaitList().toString());
-	//
-	// if (clients.deleteWaitListEntry(receivedPdu.getUserName(),
-	// receivedPdu.getEventUserName()) == 0) {
-	// sendConfirmEvent(receivedPdu);
-	// }
-	//
-	// System.out.println("Waitlist nachher" +
-	// clients.getClient(receivedPdu.getUserName()).getWaitList().toString());
-	// } catch (Exception e) {
-	// log.debug("Fehler beim behandeln des Confirm Events");
-	// }
-//	}
-
-//	private void sendConfirmEvent(ChatPDU receivedPdu) {
-//		System.out.println("WaitList ist leer\n");
-//		Vector<String> deployToTheseClients = clients.getClientNameList();
-//		ChatPDU conf = new ChatPDU();
-//		for (String i : deployToTheseClients) {
-//			conf = ChatPDU.createConfirmEventPdu(userName, receivedPdu);
-//			ClientListEntry cl = clients.getClient(i);
-//			log.debug(i.toString());
-//			try {
-//				cl.getConnection().send(conf);
-//
-//			} catch (Exception e) {
-//				log.error("Exception beim Senden der Bestätigung an die Clients");
-//				ExceptionHandler.logExceptionAndTerminate(e);
-//			}
-//		}
-//	}
-//}

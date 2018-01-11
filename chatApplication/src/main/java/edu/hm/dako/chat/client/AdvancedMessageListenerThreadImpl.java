@@ -181,27 +181,6 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
         
                
     }
-
- 
-//    private void confirmEventAction(ChatPDU receivedPdu) {
-//        try {
-//            if (receivedPdu.getPduType().equals(PduType.CONFIRM_EVENT)) userInterface.setLock(false);
-//            log.debug("Server sent Confirmation");
-//            System.out.println("Server sent confirmation " + receivedPdu.toString() + "\n");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//    private void confirmLoginEventAction(ChatPDU receivedPdu) {
-//        try {
-//            if (receivedPdu.getPduType().equals(PduType.CONFIRM_LOGIN_EVENT)) userInterface.setLock(false);
-//            log.debug("Server sent Confirmation");
-//            System.out.println("Server sent confirmation " + receivedPdu.toString() + "\n");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-   
    
     /**
      * Bestätigung des Login-Confirm-Events:
@@ -317,13 +296,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
                     case CHAT_MESSAGE_EVENT:
                         // Chat-Nachricht vom Server gesendet
                         chatMessageEventAction(receivedPdu);
-                        break;
-                     
-                        
-//                    case CONFIRM_LOGIN_EVENT:
-//                        confirmLoginEventAction(receivedPdu);
-//                        break;
-                    
+                        break;                  
                         
                    default:
                         log.debug("Ankommende PDU im Zustand " + sharedClientData.status
@@ -359,22 +332,8 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
                         // angemeldeten User veraendert hat
                         logoutEventAction(receivedPdu);
 
-                        break;
-                 
-  
-//                    case CONFIRM_EVENT:
-////                      //SERVER schickt bestï¿½tigung
-//                      confirmEventAction(receivedPdu);
-//                      break;
-//                    
-//                    case CONFIRM_LOGOUT_EVENT:
-//                            confirmEventAction(receivedPdu);
-//                            break;  
-//                            
-//                    case CONFIRM_LOGIN_EVENT:
-//                        confirmLoginEventAction(receivedPdu);
-//                        break;
-//                    
+                        break;               
+ 
                     default:
                         log.debug("Ankommende PDU im Zustand " + sharedClientData.status
                                 + " wird verworfen");
